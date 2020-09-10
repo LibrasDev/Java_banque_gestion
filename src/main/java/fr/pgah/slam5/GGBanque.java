@@ -28,44 +28,72 @@ public class GGBanque {
 
   private void traiterCommande(int cmd) {
     if (cmd == 0) {
-      fin = true;
-      System.out.println("À bientôt.");
+      quitter();
     } else if (cmd == 1) {
-      numCompteSelectionne = numDernierCompte++;
-      comptes.put(numCompteSelectionne, 0);
-      System.out.println("Le numéro de votre nouveau compte est : " + numCompteSelectionne);
+      creerNouveauCompte();
     } else if (cmd == 2) {
-      System.out.print("Entrez le numéro du compte : ");
-      numCompteSelectionne = scanner.nextInt();
-      int solde = comptes.get(numCompteSelectionne);
-      System.out.println("Le solde du compte " + numCompteSelectionne + " est " + solde);
+      selectionnerCompte();
     } else if (cmd == 3) {
-      System.out.print("Entrez le montant : ");
-      int montant = scanner.nextInt();
-      int solde = comptes.get(numCompteSelectionne);
-      comptes.put(numCompteSelectionne, solde + montant);
+      crediterCompte();
     } else if (cmd == 4) {
-      System.out.print("Entrez le montant de l'emprunt souhaité : ");
-      int montant = scanner.nextInt();
-      int solde = comptes.get(numCompteSelectionne);
-      if (solde >= montant / 2) {
-        System.out.println("Votre demande est approuvée.");
-      } else {
-        System.out.println("Votre demande est refusée.");
-      }
+      demanderEmprunt();
     } else if (cmd == 5) {
-      Set<Integer> numerosDesComptes = comptes.keySet();
-      System.out.println("La banque gère " + numerosDesComptes.size() + " comptes.");
-      for (int num : numerosDesComptes) {
-        System.out.println("\tCompte " + num + ": solde = " + comptes.get(num));
-      }
+      afficherInfosComptes();
     } else if (cmd == 6) {
-      Set<Integer> numerosDesComptes = comptes.keySet();
-      for (int num : numerosDesComptes) {
-        int solde = comptes.get(num);
-        int nouveauSolde = (int) (solde * (1 + taux));
-        comptes.put(num, nouveauSolde);
-      }
+      appliquerInterets();
     }
+  }
+
+  private void appliquerInterets() {
+    Set<Integer> numerosDesComptes = comptes.keySet();
+    for (int num : numerosDesComptes) {
+      int solde = comptes.get(num);
+      int nouveauSolde = (int) (solde * (1 + taux));
+      comptes.put(num, nouveauSolde);
+    }
+  }
+
+  private void afficherInfosComptes() {
+    Set<Integer> numerosDesComptes = comptes.keySet();
+    System.out.println("La banque gère " + numerosDesComptes.size() + " comptes.");
+    for (int num : numerosDesComptes) {
+      System.out.println("\tCompte " + num + ": solde = " + comptes.get(num));
+    }
+  }
+
+  private void demanderEmprunt() {
+    System.out.print("Entrez le montant de l'emprunt souhaité : ");
+    int montant = scanner.nextInt();
+    int solde = comptes.get(numCompteSelectionne);
+    if (solde >= montant / 2) {
+      System.out.println("Votre demande est approuvée.");
+    } else {
+      System.out.println("Votre demande est refusée.");
+    }
+  }
+
+  private void crediterCompte() {
+    System.out.print("Entrez le montant : ");
+    int montant = scanner.nextInt();
+    int solde = comptes.get(numCompteSelectionne);
+    comptes.put(numCompteSelectionne, solde + montant);
+  }
+
+  private void selectionnerCompte() {
+    System.out.print("Entrez le numéro du compte : ");
+    numCompteSelectionne = scanner.nextInt();
+    int solde = comptes.get(numCompteSelectionne);
+    System.out.println("Le solde du compte " + numCompteSelectionne + " est " + solde);
+  }
+
+  private void quitter() {
+    fin = true;
+    System.out.println("À bientôt.");
+  }
+
+  private void creerNouveauCompte() {
+    numCompteSelectionne = numDernierCompte++;
+    comptes.put(numCompteSelectionne, 0);
+    System.out.println("Le numéro de votre nouveau compte est : " + numCompteSelectionne);
   }
 }
