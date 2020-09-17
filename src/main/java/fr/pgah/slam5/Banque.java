@@ -3,46 +3,53 @@ package fr.pgah.slam5;
 import java.util.*;
 
 public class Banque {
-    private HashMap<Integer, Integer> comptes = new HashMap<>();
+    private HashMap<Integer, Compte> comptes = new HashMap<>();
     private double taux = 0.01;
     private int numDernierCompte = 0;
 
-    public int getSolde(int numCompte) {
-        return comptes.get(numCompte);
-    }
-
-    public int creerCompte() {
+    public int creerCompte(boolean estEtranger) {
         int numCompte = numDernierCompte++;
-        comptes.put(numCompte, 0);
+        Compte nouveau = new Compte(estEtranger);
+        comptes.put(numCompte, nouveau);
         return numCompte;
     }
 
+    public int getSolde(int numCompte) {
+        return comptes.get(numCompte).getSolde();
+    }
+
     public void crediter(int numCompte, int montant) {
-        int solde = comptes.get(numCompte);
+        Compte compte = comptes.get(numCompte);
+        int solde = comptes.get(numCompte).getSolde();
         int nouveauSolde = solde + montant;
-        comptes.put(numCompte, nouveauSolde);
+        compte.setSolde(nouveauSolde);
     }
 
     public void appliquerInteret() {
-        Set<Integer> numerosDesComptes = comptes.keySet();
-        for (int num : numerosDesComptes) {
-            int solde = comptes.get(num);
+        for (Compte compte : comptes.values()) {
+            int solde = compte.getSolde();
             int nouveauSolde = (int) (solde * (1 + taux));
-            comptes.put(num, nouveauSolde);
+            compte.setSolde(nouveauSolde);
         }
     }
 
     public String toString() {
         Set<Integer> numerosDesComptes = comptes.keySet();
         String res = "La banque gère " + numerosDesComptes.size() + " comptes.";
+        String provenance;
         for (int num : numerosDesComptes) {
-            res += "\n\tCompte " + num + ": solde = " + comptes.get(num);
+            if (comptes.get(num).getEstEntanger()) {
+                provenance = "étranger";
+            } else {
+                provenance = "non-étranger";
+            }
+            res += "\n\tCompte " + num + ": solde = " + comptes.get(num).getSolde() + " ( " + provenance + " ) ";
         }
         return res;
     }
 
-    public boolean autoriserEmprunt(int numCompteSelectionne, int montant) {
-        int solde = comptes.get(numCompteSelectionne);
+    public boolean autoriserEmprunt(int numCompte, int montant) {
+        int solde = comptes.get(numCompte).getSolde();
         return (solde >= montant / 2);
     }
 }
